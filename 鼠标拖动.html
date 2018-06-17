@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			
+			img{
+				position: absolute;
+			}
+		</style>
+	</head>
+	<body>
+		<img id="img" src="../img/c3.jpg" width="100px" height="100px"/>
+	</body>
+<ml>
+<script>
+	img.ondragstart=function(e){
+		offsetX=e.offsetX;
+		offsetY=e.offsetY;
+	}
+	img.ondrag=function(e){
+		var x=e.pageX;
+		var y=e.pageY;
+		
+		if (x==0 && y==0) {
+			return;
+		}
+		x-=offsetX;
+		y-=offsetY;
+		
+		img.style.left=x+'px';
+		img.style.top=y+'px';
+	}
+	
+	img.ondragend=function(){
+		//拖动结束
+	}
+</script>
+	
+	

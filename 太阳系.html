@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<style type="text/css">
+		canvas{
+		
+			background: black;
+		}
+		
+	</style>
+	<body>
+		<canvas id="MyCanvas" width="800" height="800"></canvas>
+	</body>
+</html>
+<script type="text/javascript">
+	function solarSystem(){
+		this.canvas=document.getElementById("MyCanvas").getContext("2d");
+	}
+	solarSystem.prototype.drawCirlce=function(){
+		for (var i=0;i<10;i++) {
+			this.canvas.beginPath();
+			this.canvas.strokeStyle="white";
+			this.canvas.arc(400,400,i*44,0,2*Math.PI);
+			this.canvas.stroke();
+			this.canvas.closePath()
+		}
+	}
+	
+	var time=10;
+	solarSystem.prototype.drawcircleBall=function(x,r,Scolor,Ecolor,circle){
+		this.canvas.save();
+		this.canvas.beginPath();
+		this.canvas.translate(400,400);
+		this.canvas.rotate(time*360/circle);
+		var grad=this.canvas.createRadialGradient(x,0,0,x,0,r);
+		grad.addColorStop(0,Scolor);
+		grad.addColorStop(1,Ecolor);
+		this.canvas.fillStyle=grad;
+		this.canvas.arc(x,0,r,0,Math.PI*2);
+		this.canvas.fill();
+		this.canvas.closePath();
+		this.canvas.restore();
+		time++;
+	}
+	
+	
+	var solarsystem=new solarSystem();
+	solarsystem.drawCirlce();
+	
+	
+	requestAnimationFrame(function(){
+		solarsystem.canvas.clearRect(0,0,800,800);
+		solarsystem.drawCirlce();
+		solarsystem.drawcircleBall(40,15,"red","blue",50000);
+		solarsystem.drawcircleBall(90,12,"yellow","pink",30000);
+		solarsystem.drawcircleBall(136,20,"#546","#457",10000);
+		solarsystem.drawcircleBall(178,7,"#888","#fff",50000);
+		solarsystem.drawcircleBall(222,15,"red","#fff",30000);
+		solarsystem.drawcircleBall(262,15,"red","#fff",50000);
+		solarsystem.drawcircleBall(302,25,"blue","#abc",40000);
+		solarsystem.drawcircleBall(352,10,"pink","#abc",30000);
+		solarsystem.drawcircleBall(392,18,"red","#aaa",50000);
+		requestAnimationFrame(arguments.callee);
+	})
+		
+
+</script>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<style type="text/css">
+		*{
+			margin: 0px;
+			padding: 0px;
+			background:;
+		}
+		.box{
+			width: 1444px;
+			height: 600px;
+			border: 1px solid palevioletred;
+			position: relative;
+			margin: 100px auto;
+			background:url(./img/aaa.jpg) ;	
+			position: relative;
+		}
+		.box>.d1{/*小球*/
+			width: 37px;
+			height: 37px;
+			background:url(./img/ddd.jpg)no-repeat;
+			position: absolute;
+			top:544px;
+			border-radius: 50%;
+		}
+		.d2{/*挡板*/
+			width: 350px;
+			height: 20px;
+			background: plum;
+			position: absolute;
+			border-radius: 10px;
+			bottom: 0px;
+			background: url(./img/bbb.jpg);
+		}
+		.showMenu{/*计时*/
+			width: 280px;
+			height: 180px;
+			margin-left: 380px;
+			color: palevioletred;
+			font-size:50px;
+			/*background:url(../项目/img/ee.jpg);*/
+			margin-top: -100px;
+		}
+		.box>span{
+			margin-left: 500px;
+			line-height: 800px;
+			width: 300px;
+			height: 400px;
+			font-size: 50px;
+/*			background:url(../img/u=3205194112,170374374&fm=27&gp=0.jpg)no-repeat;
+*/			color: red;
+/*			background: url(../img/tt11.jpg)no-repeat;
+*/		}
+		.box>p{
+			margin-left: 500px;
+			line-height: 800px;
+			width: 300px;
+			height: 400px;
+			font-size: 100px;
+		}
+		#getimg{
+			width: 300px;
+			height: 250px;
+			margin-top: -80px;
+			background: url(./img/ccc.jpg);
+			float: left;
+		}
+		#button{
+			width: 800px;
+			height: 100px;
+			float: left;
+			position: absolute;
+			left: 700px;
+			top: 710px;
+		}
+		#button>button{
+			width: 100px;
+			height: 50px;
+			background: yellow;
+		}
+		#button>#action{
+			background: pink;
+			width: 150px;
+			height: 100px;
+			border-radius: 50%;
+			font-size: 30px;
+			color: yellow;
+		}
+		.state{
+			width: 200px;
+			height: 80px;
+			background: pink;
+			margin-left: 920px;
+			margin-top: -50px;
+			font-size: 30px;
+			text-align: center;
+		}
+		ul{
+			position: relative;
+			top: 0px;
+		}
+	</style>
+	<body>
+		<div class="box">
+			<ul>
+			</ul>
+			<span></span>
+			<p></p>
+			<div class="d1"></div>
+			<div class="d2"></div>
+		</div>
+		
+		<div class="showMenu">
+			分数是：<span></span>
+			<div class="dsqM"></br>
+				倒计时：<span></span>
+			</div>
+		</div>
+		<div id="button">
+			<button id="action" value="开始">点击开始</button>
+			<button id="topUp" value="开始">下落模式</button>
+			<button onclick="pattern(0)" >初级模式</button>
+			<button onclick="pattern(1)" >中级模式</button>
+			<button onclick="pattern(2)" >高级模式</button>
+			<button onclick="pattern(3)" >结束游戏</button>
+		</div>
+		
+		<div class="state">游戏状态:
+			<div class="proceed" >未开始</div>
+			<div class="over" style="display: none;">已结束</div>
+		</div>
+		<span id="getimg" onclick="ggr"></span>
+	</body>
+</html>
+<script>
+	var block=document.querySelector(".d2")
+	var Menublock=document.querySelector(".box>span")
+	var MenuP=document.querySelector(".box>p")
+	var Dsqm=document.querySelector(".dsqM>span")
+	var Ac=document.querySelector("button");
+	var MenuCount=0;
+	var blockXpos=0;//挡板
+	var op=0;//判断小球
+	var dspCount=120;//时间
+	var time;//时间
+	var top1=0;//li往下掉
+	var O;//小求
+	var Xia,qiuTime=null;//开始小球和下落
+
+	function circleInit(){
+		this.ball=document.querySelector(".box>.d1");//运动的对象
+		this.box=document.querySelector(".box")
+		this.createLi=document.querySelector("ul");
+		this.Xon=1;//从左往右
+		this.Xpos=0;//对象距离左边界的位置
+		this.speed=2;//小球
+		this.Yon=1;
+		this.Ypos=560;
+	}
+	function RgbColor(rgb){
+		return Math.round(Math.random()*rgb);//随机获取颜色
+	}
+	function createLi1(rows,cols){//创建li
+		for (var i=0;i<rows;i++){
+			for (var j=0;j<cols;j++) {
+				var li=document.createElement("li");
+					li.style.width="120px";
+					li.style.height="50px";
+					if(RgbColor(10)>4){
+						li.style.backgroundColor="red";
+					}else if(RgbColor(10)>7){
+						li.style.backgroundColor="green";
+					}else{
+						li.style.backgroundColor="rgb("+RgbColor(255)+","+RgbColor(255)+","+RgbColor(255)+")";
+					}
+					li.style.listStyle="none";
+					li.style.position='absolute';
+					li.style.left=j*120+"px";
+					li.style.top=i*50+"px";
+					li.style.border="2px solid white"
+					document.querySelector("ul").appendChild(li);
+			}
+		}
+	}
+	circleInit.prototype.create=function(){
+		var list=document.querySelectorAll("li");
+		var flag=true;
+		for (var i = 0; i < list.length; i++) {
+			if(this.Xpos>list[i].offsetLeft && this.Xpos+this.ball.offsetWidth<list[i].offsetLeft+list[i].offsetWidth){
+				if(this.Ypos<list[i].offsetTop+list[i].offsetHeight+top1){
+					this.Yon=1;
+					this.Ypos=list[i].offsetTop+list[i].offsetHeight+top1;
+					if(list[i].style.backgroundColor=="red"){
+						Menublock.innerText="Good！";
+						MenuCount+=10;
+					}else if(list[i].style.backgroundColor=="green"){
+						Menublock.innerText="太棒了！加速加速";
+						MenuCount+=100;
+					}else{
+						MenuCount++;
+					}
+					document.querySelector(".showMenu>span").innerText=MenuCount;
+					setInterval(function(){//提示字体时间
+						Menublock.innerText="";
+					},5000)
+//					this.Ypos=list[i].offsetTop+list[i].offsetHeight;
+					list[i].style.display="none";
+				}
+			}
+			if(list[i].style.display!="none"){
+					flag=false;	
+			}
+		}
+		if(flag){
+			setInterval(function(){
+				MenuP.innerText="你赢了！";
+			},5000)
+				document.querySelector(".proceed").innerText="游戏结束";
+				clearInterval(qiuTime);
+				clearInterval(time);
+				clearInterval(Xia);
+//				document.querySelector(".over").style.display="block";
+			}
+	}
+	circleInit.prototype.move=function(){//小球运动函数
+		this.ball.style.left=this.Xpos+"px";
+		if(this.Xon==1){//小球从左往右走时
+			this.Xpos+=this.speed;//距离越来越大
+		}else{
+			this.Xpos-=this.speed;//距离越来越小
+		}
+		if(this.Xpos+this.ball.offsetWidth>this.box.offsetWidth){//小球走到最右边的时候
+			this.Xon=0;
+			this.Xpos=this.box.offsetWidth-this.ball.offsetWidth;//即将返回时的距离
+		}
+		if(this.Xpos<0){//当小球运动到最左边的时候
+			this.Xon=1;//改变方向
+			this.Xpos=0;//即将返回时的距离
+		}
+	this.ball.style.top=this.Ypos+"px";//小球距离上边界的位置
+		if(this.Yon==1){//小球从左往右走时
+			this.Ypos+=this.speed;//距离越来越大
+			if(blockXpos<this.Xpos && this.Xpos+this.ball.offsetWidth<blockXpos+block.offsetWidth){
+				if(this.Ypos+this.ball.offsetHeight+block.offsetHeight>=this.box.offsetHeight){
+					this.Yon=0;//改变方向
+					this.Ypos=this.box.offsetHeight-block.offsetHeight-this.ball.offsetHeight
+				}
+			}//挡板区间
+		}else{
+			this.Ypos-=this.speed;//距离越来越小
+		}
+		if(this.Ypos+this.ball.offsetHeight>this.box.offsetHeight||dspCount==0){//小球走到最右边的时候
+			op=1;
+			this.Yon=0;
+			//this.Ypos=this.box.offsetHeight-this.ball.offsetHeight;//即将返回时的距离
+		}
+		if(this.Ypos<0){//当小球运动到最左边的时候
+			this.Yon=1;//改变方向
+			this.Ypos=0;//即将返回时的距离
+		}
+	}
+	
+	var ball=new circleInit();//创建实例对象
+	createLi1(3,12);
+	function pattern(str){
+		if(str==0){
+			ball.speed=2;
+		}else if(str==1){
+			ball.speed=4;
+		}else if(str==2){
+			ball.speed=8;
+		}else{
+			confirm("游戏结束");
+			location="Bom.html";
+		}
+	}
+	var cnt=0;
+	var cnt1=0;
+	var cnt2=false;
+	var a=document.querySelector("#topUp");
+	a.onclick=function(){
+		//li下落模式
+		if(cnt==1){
+			xia();
+			cnt2=true;
+		}
+		
+	}
+	function xia(){
+		Xia=setInterval(function(){
+					top1+=0.1;
+					if(top1>380){
+						top1=380
+						Menublock.innerText="over";
+						op=2;
+					}
+						document.querySelector("ul").style.top=top1+"px";
+				})
+	}
+//	function TT(){
+	
+	document.querySelector("#action").onclick=function(){
+		if(cnt==0){
+			if(cnt2==true){
+				xia();
+			}
+			document.querySelector("#action").innerText="暂停游戏";
+//			document.querySelector(".proceed").style.display="block";
+			document.querySelector(".proceed").innerText="进行中...";
+			time=setInterval(function(){
+				dspCount--;
+				document.querySelector(".dsqM>span").innerText=dspCount;
+				if(dspCount==0){
+					clearInterval(time);
+					Menublock.innerText="时间到啦!";
+//					document.querySelector(".proceed").style.display="none";
+					document.querySelector(".over").style.display="block";
+				}	
+			},1000);
+			qiuTime=setInterval(function(){
+				if(op==0){
+					ball.move();//小球开始运动
+					ball.create();//判断li
+				}else{
+					Menublock.innerText="Over";
+					clearInterval(time);
+					clearInterval(Xia);
+					document.querySelector(".proceed").style.display="none";
+					document.querySelector(".over").style.display="block";
+					setInterval(function(){
+						location="Bom.html";//跳转到本页面
+					},3000)
+					document.querySelector(".proceed").style.display="none";
+					document.querySelector(".over").style.display="block";
+				}
+				if(dspCount==0){
+					Menublock.innerText="时间到啦!";
+					clearInterval(Xia);
+					clearInterval(time);
+				}
+				
+			},10)
+					document.onkeydown=function(e){//e是事件对象
+				if(e.keyCode==39){//挡板向右移动
+					blockXpos+=100;
+					if(blockXpos+block.offsetWidth>ball.box.offsetWidth){
+						blockXpos=ball.box.offsetWidth-block.offsetWidth
+					}
+				}else if(e.keyCode==37){//挡板左移
+					blockXpos-=100;//距离越来越小
+					if(blockXpos<0){//当挡板在最左边的时候满足一下条件
+						blockXpos=0;
+					}
+				}
+				block.style.left=blockXpos+"px";//不断修改挡板left的值来改变距离
+			}
+				cnt++;
+		}else{
+			document.querySelector("#action").innerText="开始游戏";
+			document.querySelector(".proceed").innerText="暂停中...";
+			clearInterval(qiuTime);
+			clearInterval(time);
+			clearInterval(Xia);
+			cnt--;
+			cnt1=1;
+		}
+	}
+
+</script>
